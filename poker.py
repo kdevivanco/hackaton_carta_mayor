@@ -148,12 +148,12 @@ class Player:
 
 def carta_mayor(p1,p2):
     carta_mayor_p1 = max(p1.value_list())
-    carta_mayor_p2 = max(p1.value_list())
+    carta_mayor_p2 = max(p2.value_list())
     
     if carta_mayor_p1>carta_mayor_p2:
-        return obj_1
+        return p1
     elif carta_mayor_p1<carta_mayor_p2:
-        return obj_2
+        return p2
     else:
         print('Es un verdadero empate')
 
@@ -221,4 +221,4 @@ def game():
                 print(f'Gano {player.name} con {player_points} puntos!')
 
 
-            
+game()
