@@ -84,9 +84,12 @@ class Player:
         for carta in self.hand:
             print(carta.card_info())
             
-    def es_carta_mayor(self):
+    def value_list(self):
+        value_list = [] 
+        for card in self.hand:
+            value_list.append(card.point_val) #lista de los numeros en la mano
+        return value_list
         
-    
     def hand_points(self):
                 
         position_numbers = [0, 0, 0, 0 , 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -133,7 +136,7 @@ class Player:
             lista_diferencias.append(value_list[num] - value_list[num+1]) #diferencia entre cada carta
             set_diferencias = set(lista_diferencias) #si el set es de len = 1 las cartas tienen una diferencia igual entre si
         if len(set_diferencias)>1: #todas son diferentes y no hay escalera
-            return (max(value_list), self)
+            return 0
         if len(set_diferencias) == 1 and -1 in set_diferencias: #si la diferencia es -1, hay escalera
             return 4 #cuatro puntos por escalera
         
@@ -142,11 +145,10 @@ class Player:
         if len(set_diferencias) == 1 and -1 in set_diferencias and len(set(suit_list) == 1):
             return 7 
         
-        return 0
 
 def carta_mayor(p1,p2):
-    carta_mayor_p1, obj_1 = p1
-    carta_mayor_p2, obj_2 = p2
+    carta_mayor_p1 = max(p1.value_list())
+    carta_mayor_p2 = max(p1.value_list())
     
     if carta_mayor_p1>carta_mayor_p2:
         return obj_1
@@ -154,6 +156,7 @@ def carta_mayor(p1,p2):
         return obj_2
     else:
         print('Es un verdadero empate')
+
 
 def game():
     on_off = True
@@ -163,7 +166,7 @@ def game():
         print('_______________________')
         print(' ')
         
-        answer = input('Jugar carta mayor? Si/No:')
+        answer = input('Quieres jugar poker Si/No:')
         
         print(' ')
         print('_______________________')
@@ -174,32 +177,48 @@ def game():
         elif answer.lower() == 'si':
             dealer = Player('Dealer')
             nombre_jugador = input('Escribe tu nombre: ')
-            jugador= Player(nombre_jugador)
+            player= Player(nombre_jugador)
             
-            print(' ')
-            print('_______________________')
-            print(' ') 
-            carta_dealer = dealer.escoger_carta(maso)
-            carta_jugador = jugador.escoger_carta(maso)
+        print(' ')
+        print('_______________________')
+        print(' ')
+        
+    
+        
+        player.repartir_mano(maso,5)
+        dealer.repartir_mano(maso,5)
+        
+        print(f'La mano de {player.name} es..')
+        player.print_hand()
+        print(' ')
+        print(f'La mano de {dealer.name} es..')
+        dealer.print_hand()
+        
+        
+        print(' ')
+        print('_______________________')
+        print(' ')
+        
+        player_points = player.hand_points()
+        dealer_points = dealer.hand_points()
+        
+        if dealer_points == player_points:
+            print('Vamos a jugar carta mayor para resolver el empate...')
+            carta_mayor(player,dealer)
+        
+        elif type(player_points) == tuple and type(dealer_points) != tuple:
+            #dealer tiene una mejor mano 
+            print(f'Gano {dealer.name} con {dealer.hand_points()} puntos!')
             
-            suma_jugador = jugador.carta.point_val
-            suma_dealer = dealer.carta.point_val
+        elif type(dealer_points) == tuple and type(player_points) != tuple:
+            #dealer tiene una mejor mano 
+            print(f'Gano {player.name} con {player.hand_points()} puntos!')
             
-            print(' ')
-            print('_______________________')
-            print(' ')
-            if suma_jugador>suma_dealer:
-                print(f'Gano {jugador.name} con {carta_jugador.card_info()}')
-                print(f'Perdio {dealer.name} con {carta_dealer.card_info()}')
-            elif suma_jugador<suma_dealer:
-                print(f'Gano {dealer.name} con {carta_dealer.card_info()}')
-                print(f'Perdio {jugador.name} con {carta_jugador.card_info()}')
-            elif suma_jugador == suma_jugador:
-                carta_ganadora = maso.comparar_palos(jugador.carta,dealer.carta)
-                if carta_ganadora == jugador.carta:
-                    print(f'Gano {jugador.name} con {carta_jugador.card_info()}')
-                    print(f'Perdio {dealer.name} con {carta_dealer.card_info()}')
-                else:
-                    print(f'Gano {dealer.name} con {carta_dealer.card_info()}')
-                    print(f'Perdio {jugador.name} con {carta_jugador.card_info()}')
-                
+        else:
+            if dealer_points>player_points:
+                print(f'Gano {dealer.name} con {dealer_points} puntos!')
+            elif dealer_points<player_points:
+                print(f'Gano {player.name} con {player_points} puntos!')
+
+
+            
