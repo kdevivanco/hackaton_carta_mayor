@@ -204,7 +204,8 @@ def game():
         
         if dealer_points == player_points:
             print('Vamos a jugar carta mayor para resolver el empate...')
-            carta_mayor(player,dealer)
+            ganador = carta_mayor(player,dealer)
+            print(f'Gano {ganador.name}!')
         
         elif type(player_points) == tuple and type(dealer_points) != tuple:
             #dealer tiene una mejor mano 
