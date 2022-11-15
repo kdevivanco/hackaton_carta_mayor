@@ -1,3 +1,8 @@
+#Poker por: 
+#Kayla de Vivanco
+#Tomas Heilenkotter
+#Rodrigo Flores
+
 import random 
 
 class Card:
