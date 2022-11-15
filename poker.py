@@ -14,7 +14,7 @@ class Card:
         self.string_val = string_val
 
     def card_info(self):
-        info = (f"{self.point_val}     {self.string_val} of {self.suit}")
+        info = (f"{self.string_val} of {self.suit}")
         #print(f"{self.string_val} of {self.suit} : {self.point_val} points")
         return info
 
@@ -160,6 +160,17 @@ def carta_mayor(p1,p2):
 
 def game():
     on_off = True
+
+    dict_points = {
+        1:' UN PAR ',
+        2:' DOS PARES ',
+        3:' UN TRIO ',
+        4:' ESCALERA MULTICOLOR ',
+        5:' PALOS IGUALES ',
+        6: ' FULL HOUSE ',
+        7: ' ESCALERA DE UN SOLO PALO ' 
+    }
+
     while on_off:
         maso = Deck()
         print(' ')
@@ -206,20 +217,11 @@ def game():
             print('Vamos a jugar carta mayor para resolver el empate...')
             ganador = carta_mayor(player,dealer)
             print(f'Gano {ganador.name}!')
-        
-        elif type(player_points) == tuple and type(dealer_points) != tuple:
-            #dealer tiene una mejor mano 
-            print(f'Gano {dealer.name} con {dealer.hand_points()} puntos!')
-            
-        elif type(dealer_points) == tuple and type(player_points) != tuple:
-            #dealer tiene una mejor mano 
-            print(f'Gano {player.name} con {player.hand_points()} puntos!')
-            
         else:
             if dealer_points>player_points:
-                print(f'Gano {dealer.name} con {dealer_points} puntos!')
+                print(f'Gano {dealer.name} con {dict_points[dealer_points]}!')
             elif dealer_points<player_points:
-                print(f'Gano {player.name} con {player_points} puntos!')
+                print(f'Gano {player.name} con {dict_points[player_points]}!')
 
 
 game()
