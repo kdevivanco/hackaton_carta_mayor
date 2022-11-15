@@ -1,3 +1,5 @@
+import random 
+
 class Card:
 
     def __init__( self , suit , point_val , string_val ):
@@ -7,11 +9,10 @@ class Card:
         self.string_val = string_val
 
     def card_info(self):
-        info = (f"{self.string_val} of {self.suit} : {self.point_val} points")
+        info = (f"{self.point_val}     {self.string_val} of {self.suit}")
         #print(f"{self.string_val} of {self.suit} : {self.point_val} points")
         return info
-        
-        
+
 
 
 class Deck:
@@ -61,7 +62,8 @@ class Deck:
             return carta1
         return carta2
 
-import random 
+
+
 class Player:
     def __init__(self,name):
         self.name = name
@@ -76,9 +78,12 @@ class Player:
     def print_hand(self):
         for carta in self.hand:
             print(carta.card_info())
+            
+    def es_carta_mayor(self):
+        
     
     def hand_points(self):
-        
+                
         position_numbers = [0, 0, 0, 0 , 0, 0, 0, 0, 0, 0, 0, 0, 0]
         
         #Verificar tres veces: 
@@ -110,23 +115,86 @@ class Player:
             return 5
         
         
-        #escalera multisuit
-        value_list = []
+        #4. escalera multisuit
+        value_list = [] 
         for card in self.hand:
             value_list.append(card.point_val) #lista de los numeros en la mano
+
+        value_list.sort() #ordena la lista de valores
+        value_set = set(value_list) #crea un set de valores unicos
         
-        value_list.sort() #ordena
-        value_set = set(value_list) #crea un set de los valores unicos de la lista
+        lista_diferencias = []
+        for num in range(len(value_list)-1): #para cada num en la lista
+            lista_diferencias.append(value_list[num] - value_list[num+1]) #diferencia entre cada carta
+            set_diferencias = set(lista_diferencias) #si el set es de len = 1 las cartas tienen una diferencia igual entre si
+        if len(set_diferencias)>1: #todas son diferentes y no hay escalera
+            return (max(value_list), self)
+        if len(set_diferencias) == 1 and -1 in set_diferencias: #si la diferencia es -1, hay escalera
+            return 4 #cuatro puntos por escalera
         
-        if len(value_list) == len(value_set): #hay 5 cartas diferentes en la mano
-            #si la diferencia entre el valor anterior vs el valor actual == 1 
-            lista_diferencias = []
-            for num in range(len(value_list)-1):
-                lista_diferencias.append(value_list[num] - value_list[num+1]) #diferencia entre cada carta
-                set_diferencias = set(lista_diferencias) #viendo que solo hayan diferencias de -1
-                if -1 in lista_diferencias and len(set_diferencias) == 1: #escalera
-                    return 4
+        
+        #7. escalera de un solo palo... 
+        if len(set_diferencias) == 1 and -1 in set_diferencias and len(set(suit_list) == 1):
+            return 7 
         
         return 0
-        
 
+def carta_mayor(p1,p2):
+    carta_mayor_p1, obj_1 = p1
+    carta_mayor_p2, obj_2 = p2
+    
+    if carta_mayor_p1>carta_mayor_p2:
+        return obj_1
+    elif carta_mayor_p1<carta_mayor_p2:
+        return obj_2
+    else:
+        print('Es un verdadero empate')
+
+def game():
+    on_off = True
+    while on_off:
+        maso = Deck()
+        print(' ')
+        print('_______________________')
+        print(' ')
+        
+        answer = input('Jugar carta mayor? Si/No:')
+        
+        print(' ')
+        print('_______________________')
+        print(' ')
+        
+        if answer.lower() == 'no':
+            on_off = False
+        elif answer.lower() == 'si':
+            dealer = Player('Dealer')
+            nombre_jugador = input('Escribe tu nombre: ')
+            jugador= Player(nombre_jugador)
+            
+            print(' ')
+            print('_______________________')
+            print(' ') 
+            carta_dealer = dealer.escoger_carta(maso)
+            carta_jugador = jugador.escoger_carta(maso)
+            
+            suma_jugador = jugador.carta.point_val
+            suma_dealer = dealer.carta.point_val
+            
+            print(' ')
+            print('_______________________')
+            print(' ')
+            if suma_jugador>suma_dealer:
+                print(f'Gano {jugador.name} con {carta_jugador.card_info()}')
+                print(f'Perdio {dealer.name} con {carta_dealer.card_info()}')
+            elif suma_jugador<suma_dealer:
+                print(f'Gano {dealer.name} con {carta_dealer.card_info()}')
+                print(f'Perdio {jugador.name} con {carta_jugador.card_info()}')
+            elif suma_jugador == suma_jugador:
+                carta_ganadora = maso.comparar_palos(jugador.carta,dealer.carta)
+                if carta_ganadora == jugador.carta:
+                    print(f'Gano {jugador.name} con {carta_jugador.card_info()}')
+                    print(f'Perdio {dealer.name} con {carta_dealer.card_info()}')
+                else:
+                    print(f'Gano {dealer.name} con {carta_dealer.card_info()}')
+                    print(f'Perdio {jugador.name} con {carta_jugador.card_info()}')
+                
